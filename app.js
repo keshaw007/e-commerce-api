@@ -8,9 +8,11 @@ const errorMiddleware = require('./middlewares/error');
 const app = express(); 
 
 // config
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config({ path: 'etc/secrets/config.env' }); 
-} 
+// if (process.env.NODE_ENV !== 'production') {
+//     require('dotenv').config({ path: 'etc/secrets/config.env' }); 
+// } 
+
+require('dotenv').config();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -22,24 +24,16 @@ const product = require('./routes/productRoute');
 const order = require('./routes/orderRoute');
 const payment = require('./routes/paymentRoute');
 
+app.get('/', (req, res)=>{
+    res.send("Server is running.");
+})
+
 app.use('/api/v1', user);
 app.use('/api/v1', product);
 app.use('/api/v1', order);
 app.use('/api/v1', payment);
 
-// deployment
-__dirname = path.resolve();
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '/frontend/build')))
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
-    });
-} else {
-    app.get('/', (req, res) => {
-        res.send('Server is Running! 🚀');
-    });
-}
 
 // error middleware
 app.use(errorMiddleware);
